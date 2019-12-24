@@ -26,7 +26,7 @@ public class Tree {
         n2.setEncoding("1");
         toLeaves(n1,n1.getEncoding());
         toLeaves(n2,n2.getEncoding());
-        root = new Node(n1 , n2 , 1);
+        root = new Node(n1, n2 , 1);
     }
     public  void build(int arr[] , int n ){
         Vector<Pair< Pair<Integer , Integer> , String >> v  =getCategories(arr , n );
@@ -39,12 +39,13 @@ public class Tree {
                 frq.put(v.elementAt(i).getKey() ,  1);
 
         }
+        frq.put(new Pair<>(0,0) ,1 );
         PriorityQueue<Node> pq = new PriorityQueue<Node>();
         HashMap<Pair<Integer , Integer> , Node> map = new HashMap<>();
         Iterator it = frq.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry mp = (Map.Entry)it.next();
-            Node nn = new Node(1.0*(Integer)mp.getValue()/n);
+            Node nn = new Node((Pair<Integer, Integer>) mp.getKey(),1.0*(Integer)mp.getValue()/(n+1));
             pq.add(nn);
             map.put((Pair<Integer, Integer>) mp.getKey() , nn);
 //            vec.add(nn);
@@ -64,8 +65,10 @@ public class Tree {
         pq.remove();
 
         runHuffman(n1 , n2);
-        for (Pair< Pair<Integer , Integer> , String > itt: v) {
-            System.out.println(map.get(itt.getKey()).getEncoding() + itt.getValue() );
+        /// todo print huffman table
+        
+        for (Pair< Pair<Integer , Integer> , String > itt: v) { ///encoded string
+            System.out.println(map.get(itt.getKey()).getEncoding() + " "+ itt.getValue() );
         }
 
 

@@ -8,7 +8,7 @@ public class Node implements Comparable<Node> {
     Node  right = null ;
     String encoding ="";
     String curr = "";
-//    Pair<Integer , Integer > nodeCategory = null ;
+    Pair<Integer , Integer > nodeCategory = null ;
     public Node(double _probability){
         Probabiliy = _probability;
     }
@@ -16,6 +16,10 @@ public class Node implements Comparable<Node> {
         Probabiliy = _probability;
         left = _left;
         right = _right;
+    }
+    Node(Pair<Integer , Integer> p , double _prob){
+        nodeCategory = p;
+        this.Probabiliy = _prob;
     }
     public int compareTo(Node rhs){
         return Double.compare(Probabiliy, rhs.Probabiliy);
