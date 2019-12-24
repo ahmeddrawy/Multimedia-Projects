@@ -160,14 +160,14 @@ public class Tree {
         System.out.println("finished");
 
     }
-    public void readFromFile(String path ){
+
+    public Vector<Pair< Pair<Integer , Integer> , String >>  readFromFile(String path ){
         String encoded = "";
-        Set<Pair <Pair<Integer , Integer> , String> > mset = new HashSet<>();
+        Vector<Pair <Pair<Integer , Integer> , String> > mset = new Vector<>();
 
         /// todo read vheight, vwidth , number of vectors,
         if(!new File(path).canRead()){
             System.out.println("cant read");
-            return ;
         }
         try {
             DataInputStream f = new DataInputStream(new FileInputStream(path));
@@ -181,7 +181,7 @@ public class Tree {
                     int sz = f.readInt();
                     byte[] arr =new byte[sz];
                     f.read(arr);
-                     representation=   new String(arr);
+                    representation=   new String(arr);
                     mset.add(new Pair<>(new Pair<>(zeroCnt , category ) , representation) );
                 }
                 for(Pair <Pair<Integer , Integer> , String> itt : mset){
@@ -204,9 +204,62 @@ public class Tree {
             e.printStackTrace();
         }
         /// read code book
-
-
+        return mset;
 
     }
+
+    public void Decode(String FilePath, String seq){
+        Vector<Pair< Pair<Integer , Integer> , String >> Huffman  =readFromFile(FilePath);
+        String bits ="";
+        String out = "";
+        String AdditionalBits ="";
+        int Zeroes = 0;
+        int value =0;
+        int bitsSize = 0;
+        for(int i =0 ; i <seq.length(); i++){
+            bits += seq.charAt(i);
+            for(Pair< Pair<Integer , Integer> , String > it : Huffman) {
+                if (it.getValue().equals(bits)) {
+                    Zeroes = it.getKey().getKey();
+                    bitsSize = it.getKey().getValue();
+                    for (int j = 0; j < Zeroes; j++) {
+                        out += "0";
+                    }
+                    bits = "";
+                    AdditionalBits = seq.substring(i+1, i+bitsSize+1);
+                    /*if (AdditionalBits.charAt(0) == '0')
+                        out += "-";*/
+                    value = getNumber(AdditionalBits);
+                    out += Integer.toString(value);
+                    i += bitsSize;
+                }
+            }
+        }
+        System.out.println(out);
+    }
+
+    private int getNumber(String AdditionalBits){
+        double n = 0;
+        int category = AdditionalBits.length();
+        char SignBit = AdditionalBits.charAt(0) ;
+        if(category == 1){
+            if(SignBit == '1')
+                return 1;
+            else
+                return -1;
+        }
+        else {
+            if (SignBit == '1') {
+                int decimal = Integer.parseInt(AdditionalBits.substring(1), 2);
+                n = (Math.pow(2.0,Double.valueOf(category) -1.0)) + decimal;
+            } else {
+                int decimal = Integer.parseInt(AdditionalBits.substring(1), 2);
+                n = (Math.pow(2.0,Double.valueOf(category)) -1.0) - decimal;
+                n = -n;
+            }
+            return (int)n;
+        }
+    }
+
 
 }
