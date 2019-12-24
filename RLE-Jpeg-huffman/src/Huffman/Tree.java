@@ -2,6 +2,7 @@ package Huffman;
 
 import javafx.util.Pair;
 
+import java.io.*;
 import java.net.Inet4Address;
 import java.util.*;
 
@@ -28,7 +29,7 @@ public class Tree {
         toLeaves(n2,n2.getEncoding());
         root = new Node(n1, n2 , 1);
     }
-    public  void build(int arr[] , int n ){
+    public  void build(int arr[] , int n ,String path  ){
         Vector<Pair< Pair<Integer , Integer> , String >> v  =getCategories(arr , n );
         HashMap<Pair<Integer , Integer > , Integer> frq = new HashMap<>();
         for(int i = 0 ; i < v.size() ; ++i){
@@ -66,11 +67,24 @@ public class Tree {
 
         runHuffman(n1 , n2);
         /// todo print huffman table
-        
-        for (Pair< Pair<Integer , Integer> , String > itt: v) { ///encoded string
-            System.out.println(map.get(itt.getKey()).getEncoding() + " "+ itt.getValue() );
-        }
+        Set<Pair <Pair<Integer , Integer> , String> > mset = new HashSet<>();
+        for (Pair< Pair<Integer , Integer> , String > itt: v) {
+          //  System.out.println( itt.getKey().getKey() + " " +itt.getKey().getValue()+" "+map.get(itt.getKey()).getEncoding());
+            mset.add( new Pair <Pair<Integer , Integer> , String>   (itt.getKey() , map.get(itt.getKey()).getEncoding()));
 
+        }
+        for(Pair <Pair<Integer , Integer> , String>  itt : mset){
+            System.out.println(itt.getKey());
+            System.out.println(itt.getValue());
+            System.out.println("----");
+        }
+            String ret = "";
+        for (Pair< Pair<Integer , Integer> , String > itt: v) { ///encoded string
+            ret+=map.get(itt.getKey()).getEncoding() + itt.getValue();
+//            System.out.println(map.get(itt.getKey()).getEncoding() + " "+ itt.getValue() );
+        }
+        System.out.println(ret);
+        writetofile(path ,ret ,mset);
 
     }
     /// taking an array of integers and convert it to vectors of <<cnt of zeros , number> , binary representation>
@@ -116,6 +130,81 @@ public class Tree {
         if(negative)
             return '0' + ret;
         return '1' + ret;
+
+    }
+    private void writetofile(String path , String encoded ,Set<Pair <Pair<Integer , Integer> , String> > mset ){
+        /// todo write code book here
+//        PrintStream p = null;
+        DataOutputStream p = null;
+        System.out.println("1");
+        try {
+            p = new DataOutputStream(new FileOutputStream(path) );
+            p.writeInt(mset.size());
+            for(Pair <Pair<Integer , Integer> , String> itt : mset ){
+                p.writeInt(itt.getKey().getKey());
+                p.writeInt(itt.getKey().getValue());
+                p.writeInt(itt.getValue().length());
+                p.writeBytes(itt.getValue());
+            }
+            p.writeInt(encoded.length());
+            p.writeBytes(encoded);
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("finished");
+
+    }
+    public void readFromFile(String path ){
+        String encoded = "";
+        Set<Pair <Pair<Integer , Integer> , String> > mset = new HashSet<>();
+
+        /// todo read vheight, vwidth , number of vectors,
+        if(!new File(path).canRead()){
+            System.out.println("cant read");
+            return ;
+        }
+        try {
+            DataInputStream f = new DataInputStream(new FileInputStream(path));
+            try {
+                int booksz = f.readInt();
+                for (int i = 0 ; i < booksz ; ++i){
+                    int zeroCnt = 0 , category = 0 ;
+                    String representation = "";
+                    zeroCnt= f.readInt();
+                    category = f.readInt();
+                    int sz = f.readInt();
+                    byte[] arr =new byte[sz];
+                    f.read(arr);
+                     representation=   new String(arr);
+                    mset.add(new Pair<>(new Pair<>(zeroCnt , category ) , representation) );
+                }
+                for(Pair <Pair<Integer , Integer> , String> itt : mset){
+                    System.out.println(itt.getKey().getKey());
+                    System.out.println(itt.getKey().getValue());
+                    System.out.println(itt.getValue());
+                }
+                int sz = f.readInt();
+                byte[] arr = new byte[sz];
+                f.read(arr);
+                encoded= new String(arr);
+                System.out.println(encoded);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        /// read code book
+
+
 
     }
 

@@ -17,7 +17,8 @@ public class Main {
         }
         ///for(int i = 0 ; i < n ; ++i) System.out.println(arr[i]);
         Tree t = new Tree() ;
-        t.build(arr , n );
+        t.build(arr , n,"/home/tw3/Desktop/3rd year projects/Multimedia/RLE-Jpeg-huffman/out.txt" );
+        t.readFromFile("/home/tw3/Desktop/3rd year projects/Multimedia/RLE-Jpeg-huffman/out.txt");
 
     }
 }
