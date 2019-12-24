@@ -73,6 +73,7 @@ public class Tree {
             mset.add( new Pair <Pair<Integer , Integer> , String>   (itt.getKey() , map.get(itt.getKey()).getEncoding()));
 
         }
+        mset.add(new Pair <Pair<Integer , Integer> , String>   ( new Pair<>(0,0), map.get(new Pair<>(0,0)).getEncoding()));
         for(Pair <Pair<Integer , Integer> , String>  itt : mset){
             System.out.println(itt.getKey());
             System.out.println(itt.getValue());
